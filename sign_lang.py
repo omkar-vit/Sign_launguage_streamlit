@@ -1,15 +1,27 @@
 import streamlit as st
-from streamlit_lottie import st_lottie
-from streamlit_option_menu import option_menu
+from streamlit_lottie import st_lottie          #pip install streamlit-lottie
+import requests                                 #pip install requests 
+from streamlit_option_menu import option_menu   #pip install streamlit-option-menu
 
 st.set_page_config(page_title="Sign Language Helper", page_icon=":raised_hand_with_fingers_splayed:", layout="wide")
 
+def load_lottieurl(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+
+# Use local CSS
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
 local_css("style/style.css")
+
+# ---- LOAD ASSETS ----
+lottie_coding = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json")
 
 # Navbar
 selected = option_menu(None, ["Home", "Model", "Dictionary", "About Us"], 
@@ -47,8 +59,8 @@ elif selected == "About Us":
                 If you got any quesiton, feel free to connect with us through email.
                 """
             )
-    # with right_column:
-    #     st_lottie(lottie_coding, height=300, key="coding")
+    with right_column:
+        st_lottie(lottie_coding, height=300, key="coding")
         
     with st.container():
         st.write("---")
