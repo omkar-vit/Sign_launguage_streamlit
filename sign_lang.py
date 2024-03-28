@@ -1,4 +1,5 @@
 import streamlit as st
+import cv2
 from streamlit_lottie import st_lottie          #pip install streamlit-lottie
 import requests                                 #pip install requests 
 from streamlit_option_menu import option_menu   #pip install streamlit-option-menu
@@ -22,6 +23,7 @@ local_css("style/style.css")
 
 # ---- LOAD ASSETS ----
 lottie_coding = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json")
+video1 = open("sign_video.mp4", "rb")  
 
 # Navbar
 selected = option_menu(None, ["Home", "Model", "Dictionary", "About Us"], 
@@ -30,12 +32,46 @@ selected = option_menu(None, ["Home", "Model", "Dictionary", "About Us"],
 
 # Display content based on selected option
 if selected == "Home":
-    st.write("Welcome to the Home Page!")
-    # Add your home page content here
+    with st.container():
+        st.write("Step into the world of Sign Language, where every sign tells a story and every gesture bridges worlds.:wave:")
+        st.title("SignSpeak: Where silent gestures find their powerful voice.")
+        st.subheader("Explore our project to witness the transformative impact of bridging communication divides and fostering inclusivity.")
+        st.write("Join us as we embark on this enlightening journey together! [learn more >](https://google.com)")
+
+    #what I do//// maybe add a video
+    with st.container():
+        st.write("---")
+        left_column, right_column = st.columns(2)
+        with left_column:
+            st.header("What we do")
+            st.write("##")
+            st.subheader(
+        """
+        Hello, I'm [Your Name]. Welcome to signSpeak!
+        
+        - With signSpeak, we've created a platform that understands your signs, translates them into written text, and even converts them into spoken words.
+        - Record your signs using a camera or webcam, and our technology will detect and translate them into your preferred language.
+        - You can also convert the translated text into spoken words, making it easier for everyone to understand.
+        
+        Thank you for joining us on this journey. Feel free to reach out if you have any questions or feedback.
+
+        """
+            )
+            
+        with right_column:
+            width = 46
+        #     width = st.sidebar.slider(
+        #     label="Width", min_value=0, max_value=100, value=DEFAULT_WIDTH, format="%d%%"
+        # )
+        #     width = max(width, 0.01)
+            side = max((100 - width) / 2, 0.01)
+
+            _, container, _ = st.columns([side, width, side])
+            container.video(data=video1)
 
 elif selected == "Model":
-    st.write("This is the Model Page!")
-    # Add your model page content here
+    cap = cv2.VideoCapture(1)
+    detect = st.camera_input("")
 
 elif selected == "Dictionary":
     st.write("Here's the Dictionary Page!")
