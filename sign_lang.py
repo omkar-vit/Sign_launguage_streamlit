@@ -36,7 +36,6 @@ if selected == "Home":
         st.write("Step into the world of Sign Language, where every sign tells a story and every gesture bridges worlds.:wave:")
         st.title("SignSpeak: Where silent gestures find their powerful voice.")
         st.subheader("Explore our project to witness the transformative impact of bridging communication divides and fostering inclusivity.")
-        st.write("Join us as we embark on this enlightening journey together! [learn more >](https://google.com)")
 
     #what I do//// maybe add a video
     with st.container():
@@ -74,8 +73,52 @@ elif selected == "Model":
     detect = st.camera_input("")
 
 elif selected == "Dictionary":
-    st.write("Here's the Dictionary Page!")
-    # Add your dictionary page content here
+        
+    num_columns = 5
+    num_rows = 6  # 26 letters divided by 5 columns = 5.2 rows, rounded up to 6
+
+    # Create a list to hold the content for each column
+    columns = st.columns(num_columns)
+
+    # Define the maximum number of images
+    max_images = min(26, num_rows * num_columns)
+
+    # Loop through each image
+    for img_number in range(1, max_images + 1):
+        # Calculate the row and column for the current image number
+        row = (img_number - 1) // num_columns
+        col_index = (img_number - 1) % num_columns
+
+        # Get the column corresponding to the image's column index
+        col = columns[col_index]
+
+        # Display the image inside an expander
+        with col.expander(f"Image {img_number}"):
+            col.image(f"images/{img_number}.jpg", width=150)
+
+    # Apply responsive CSS styling
+    col_width = 100 / num_columns
+    st.write(
+        f"""
+        <style>
+        .reportview-container .main .block-container {{
+            max-width: 100%;
+        }}
+        .reportview-container .main {{
+            padding-left: 0;
+            padding-right: 0;
+        }}
+        .reportview-container .main .block-container .block-element {{
+            width: calc({col_width}% - 20px);
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 elif selected == "About Us":
     with st.container():
