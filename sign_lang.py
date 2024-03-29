@@ -73,6 +73,24 @@ elif selected == "Model":
     detect = st.camera_input("")
 
 elif selected == "Dictionary":
+    
+    text = """Indiansignlanguage.org offers a huge collection of Indian Sign Language (ISL) signs.
+    Each sign has an image, running video and threaded discussions. It is an ideal resource to use while you learn/teach Indian Sign Language. Each sign has an image, running video and threaded discussions. We are continually adding more signs and designing new services to empower the Deaf.
+    Please share your ideas and comments and help us make this service better."""
+
+    # YouTube video URL
+    video_url = "https://youtu.be/xwGHOUcnnHU?list=TLGGWlgSddFPLisyODAzMjAyNA"
+
+    # Create columns for the layout
+    col1, col2 = st.columns(2)
+
+    # Display text in the left column
+    with col1:
+        st.write(text)
+
+    # Display YouTube video in the right column
+    with col2:
+        st.video(video_url)
         
     num_columns = 5
     num_rows = 6  # 26 letters divided by 5 columns = 5.2 rows, rounded up to 6
@@ -118,6 +136,52 @@ elif selected == "Dictionary":
         """,
         unsafe_allow_html=True,
     )
+    
+
+    num_columns = 5
+    num_rows = 2
+
+    # Create a list to hold the content for each column
+    columns = st.columns(num_columns)
+
+    # Loop through each row
+    for row in range(num_rows):
+        # Loop through each column
+        for i, col in enumerate(columns):
+            # Calculate the image number based on the row and column
+            if row == 0:
+                img_number = row * num_columns + i + 31
+            else:
+                img_number = (row - 1) * num_columns + i + 36
+            # Display the image inside an expander
+            with col.expander(f"Image {img_number}"):
+                # Check if the image number exists
+                if img_number <= 39:
+                    col.image(f"images/{img_number}.jpg", width=150)
+
+    # Apply responsive CSS styling
+    col_width = 100 / num_columns
+    st.write(
+        f"""
+        <style>
+        .reportview-container .main .block-container {{
+            max-width: 100%;
+        }}
+        .reportview-container .main {{
+            padding-left: 0;
+            padding-right: 0;
+        }}
+        .reportview-container .main .block-container .block-element {{
+            width: calc({col_width}% - 20px);
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 
 elif selected == "About Us":
