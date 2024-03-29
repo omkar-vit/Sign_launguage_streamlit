@@ -46,9 +46,9 @@ if selected == "Home":
             st.write("##")
             st.subheader(
         """
-        Hello, I'm [Your Name]. Welcome to signSpeak!
+        Hello, Welcome to SignSpeak!
         
-        - With signSpeak, we've created a platform that understands your signs, translates them into written text, and even converts them into spoken words.
+        - With SignSpeak, we've created a platform that understands your signs, translates them into written text, and even converts them into spoken words.
         - Record your signs using a camera or webcam, and our technology will detect and translate them into your preferred language.
         - You can also convert the translated text into spoken words, making it easier for everyone to understand.
         
