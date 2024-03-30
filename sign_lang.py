@@ -1,5 +1,5 @@
 import streamlit as st
-
+#pyttsx3
 from streamlit_lottie import st_lottie  # pip install streamlit-lottie
 import requests  # pip install requests
 from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
@@ -76,9 +76,11 @@ elif selected == "Model":
     model()
 
 elif selected == "Dictionary":
-
-    text = """**Indian Sign Language (ISL) Signs**
+    
+    text = """*Indian Sign Language (ISL) Signs*
     Indiansignlanguage.org offers a vast collection of Indian Sign Language (ISL) signs. Each sign is accompanied by an image, a running video, and threaded discussions. It is an ideal resource for learning or teaching Indian Sign Language. We are continuously adding more signs and developing new services to empower the Deaf community.
+
+
 
     Please share your ideas and comments to help us improve this service."""
 
@@ -88,13 +90,16 @@ elif selected == "Dictionary":
     # Add some padding
     st.write("")
     st.write("")
+    
 
     # Create columns for the layout
-    col1, col2 = st.columns([3, 2])
+    col1, col2 = st.columns([4, 3])
 
     # Display text in the left column
     with col1:
-        st.markdown(text)
+        st.write("##")
+        st.markdown(f'<div class="text-container">{text}', unsafe_allow_html=True)
+        
 
     # Display YouTube video in the right column
     with col2:
@@ -168,7 +173,7 @@ elif selected == "Dictionary":
             for i, col in enumerate(columns):
                 # Calculate the image number based on the row and column
                 if row == 0:
-                    img_number = row * num_columns + i + 30
+                    img_number = row * num_columns + i + 31
                 else:
                     img_number = (row - 1) * num_columns + i + 35
                 # Display the image inside an expander
