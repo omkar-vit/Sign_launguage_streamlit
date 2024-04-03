@@ -171,7 +171,7 @@ elif selected == "Dictionary":
             for i, col in enumerate(columns):
                 # Calculate the image number based on the row and column
                 if row == 0:
-                    img_number = row * num_columns + i + 30
+                    img_number = row * num_columns + i + 30                 
                 else:
                     img_number = (row - 1) * num_columns + i + 35
                 # Display the image inside an expander
