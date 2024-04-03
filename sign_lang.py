@@ -105,7 +105,7 @@ elif selected == "Dictionary":
 
     with st.sidebar:
         option = st.selectbox(
-            "Which signs you would like to see",
+            "Which signs you would like to see?",
             ("Alphabets (A to Z)", "Numbers (0 to 9)"),
             index=None,
             placeholder="Select one option",
