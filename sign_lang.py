@@ -77,12 +77,10 @@ elif selected == "Model":
 
 elif selected == "Dictionary":
     
-    text = """*Indian Sign Language (ISL) Signs*
+    text = """Indian Sign Language (ISL) Signs
     Indiansignlanguage.org offers a vast collection of Indian Sign Language (ISL) signs. Each sign is accompanied by an image, a running video, and threaded discussions. It is an ideal resource for learning or teaching Indian Sign Language. We are continuously adding more signs and developing new services to empower the Deaf community.
-
-
-
     Please share your ideas and comments to help us improve this service."""
+
 
     # YouTube video URL
     video_url = "https://youtu.be/xwGHOUcnnHU?list=TLGGWlgSddFPLisyODAzMjAyNA"
@@ -173,7 +171,7 @@ elif selected == "Dictionary":
             for i, col in enumerate(columns):
                 # Calculate the image number based on the row and column
                 if row == 0:
-                    img_number = row * num_columns + i + 31
+                    img_number = row * num_columns + i + 30
                 else:
                     img_number = (row - 1) * num_columns + i + 35
                 # Display the image inside an expander
