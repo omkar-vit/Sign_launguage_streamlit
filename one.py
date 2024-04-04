@@ -1,50 +1,46 @@
-
+import cv2
 import streamlit as st
-from streamlit_option_menu import option_menu
+import numpy as np
+import tempfile
 
-# 1. as sidebar menu
-with st.sidebar:
-    selected = option_menu("Main Menu", ["Home", 'Settings'], 
-        icons=['house', 'gear'], menu_icon="cast", default_index=1)
-    selected
+st.set_page_config(page_title="Sign Language Helper", page_icon=":raised_hand_with_fingers_splayed:", layout="wide")
 
-# 2. horizontal menu
-selected2 = option_menu(None, ["Home", "Upload", "Tasks", 'Settings'], 
-    icons=['house', 'cloud-upload', "list-task", 'gear'], 
-    menu_icon="cast", default_index=0, orientation="horizontal")
-selected2
+# Use this line to capture video from the webcam
+cap = cv2.VideoCapture(0)
 
-# 3. CSS style definitions
-selected3 = option_menu(None, ["Home", "Upload",  "Tasks", 'Settings'], 
-    icons=['house', 'cloud-upload', "list-task", 'gear'], 
-    menu_icon="cast", default_index=0, orientation="horizontal",
-    styles={
-        "container": {"padding": "0!important", "background-color": "#fafafa"},
-        "icon": {"color": "orange", "font-size": "25px"}, 
-        "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-        "nav-link-selected": {"background-color": "green"},
-    }
-)
+# Set the title for the Streamlit app
+st.title("Video Capture with OpenCV")
 
-# 4. Manual item selection
-if st.session_state.get('switch_button', False):
-    st.session_state['menu_option'] = (st.session_state.get('menu_option', 0) + 1) % 4
-    manual_select = st.session_state['menu_option']
-else:
-    manual_select = None
-    
-selected4 = option_menu(None, ["Home", "Upload", "Tasks", 'Settings'], 
-    icons=['house', 'cloud-upload', "list-task", 'gear'], 
-    orientation="horizontal", manual_select=manual_select, key='menu_4')
-st.button(f"Move to Next {st.session_state.get('menu_option', 1)}", key='switch_button')
-selected4
+frame_placeholder = st.empty()
 
-# 5. Add on_change callback
-def on_change(key):
-    selection = st.session_state[key]
-    st.write(f"Selection changed to {selection}")
-    
-selected5 = option_menu(None, ["Home", "Upload", "Tasks", 'Settings'],
-                        icons=['house', 'cloud-upload', "list-task", 'gear'],
-                        on_change=on_change, key='menu_5', orientation="horizontal")
-selected5
+# Add a "Stop" button and store its state in a variable
+stop_button_pressed = st.button("Stop")
+
+while cap.isOpened() and not stop_button_pressed:
+    ret, frame = cap.read()
+
+    if not ret:
+        st.write("The video capture has ended.")
+        break
+
+    # You can process the frame here if needed
+    # e.g., apply filters, transformations, or object detection
+
+    # Convert the frame from BGR to RGB format
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # Resize the frame to desired dimensions
+    width, height, _ = frame.shape
+    target_width = int(width *3)  # Increase width by 50%
+    target_height = int(height)  # Increase height by 50%
+    resized_frame = cv2.resize(frame, (target_width, target_height))
+
+    # Display the resized frame using Streamlit's st.image
+    frame_placeholder.image(resized_frame, channels="RGB")  # Adjust width as needed
+
+    # Break the loop if the 'q' key is pressed or the user clicks the "Stop" button
+    if cv2.waitKey(1) & 0xFF == ord("q") or stop_button_pressed: 
+        break
+
+cap.release()
+cv2.destroyAllWindows()
