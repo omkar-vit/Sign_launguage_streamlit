@@ -76,7 +76,7 @@ elif selected == "Model":
     model()
 
 elif selected == "Dictionary":
-    
+
     text = """
     Indiansignlanguage.org offers a vast collection of Indian Sign Language (ISL) signs. Each sign is accompanied by an image, a running video, and threaded discussions. It is an ideal resource for learning or teaching Indian Sign Language. We are continuously adding more signs and developing new services to empower the Deaf community.
     Please share your ideas and comments to help us improve this service."""
@@ -97,7 +97,6 @@ elif selected == "Dictionary":
     with col1:
         st.write("##")
         st.markdown(f'<div class="text-container">{text}', unsafe_allow_html=True)
-        
 
     # Display YouTube video in the right column
     with col2:
