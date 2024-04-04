@@ -77,7 +77,7 @@ elif selected == "Model":
 
 elif selected == "Dictionary":
     
-    text = """Indian Sign Language (ISL) Signs
+    text = """
     Indiansignlanguage.org offers a vast collection of Indian Sign Language (ISL) signs. Each sign is accompanied by an image, a running video, and threaded discussions. It is an ideal resource for learning or teaching Indian Sign Language. We are continuously adding more signs and developing new services to empower the Deaf community.
     Please share your ideas and comments to help us improve this service."""
 
