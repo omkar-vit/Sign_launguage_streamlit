@@ -4,6 +4,7 @@ import numpy as np
 import streamlit as st
 import pickle
 import base64
+import pyttsx3
 
 def load_model():
     model_dict = pickle.load(open('./model.p', 'rb'))
@@ -14,7 +15,7 @@ def model():
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
-    labels_dict = {0: 'Hello', 1: 'Peace', 2: 'Please', 3: 'No'}
+    labels_dict = {0: 'Hello', 1: 'Peace', 2: 'OK', 3: 'No'}
 
     model = load_model()
 
@@ -83,9 +84,16 @@ def model():
                 # Predict gesture
                 try:
                     prediction = model.predict([np.asarray(data_aux)])
+                    # After predicting the character
                     predicted_character = labels_dict[int(prediction[0])]
+
                     # Overlay gesture on frame
                     cv2.putText(frame, predicted_character, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+                    # Convert text to speech
+                    engine = pyttsx3.init()
+                    engine.say(predicted_character)
+                    engine.runAndWait()
                 except:
                     pass
 
