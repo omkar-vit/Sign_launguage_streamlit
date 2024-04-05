@@ -74,6 +74,16 @@ if selected == "Home":
 
 elif selected == "Model":
     model()
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.text_input(
+            "Detected sign below!",
+            "here i want the word to be printed",
+            key="placeholder",
+        )
+        
+    
 
 elif selected == "Dictionary":
 
