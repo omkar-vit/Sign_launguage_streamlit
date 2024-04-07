@@ -5,10 +5,16 @@ import streamlit as st
 import pickle
 import base64
 import pyttsx3
+from googletrans import Translator
 
+translator = Translator()
+
+
+@st.cache_data()
 def load_model():
     model_dict = pickle.load(open('./model.p', 'rb'))
     return model_dict['model']
+
 
 def model():
     mp_hands = mp.solutions.hands
@@ -26,16 +32,30 @@ def model():
         return
 
     # Create Streamlit columns
-    col1, col2 = st.columns([1, 3])
+    col1, col2 = st.columns([3, 1])
 
     # Create a Streamlit text box in the left column
     with col1:
-        st.text("Predicted Sign:")
-        predicted_sign_textbox = st.empty()
+        video_frame = st.empty()
 
     # Create a Streamlit video frame in the right column
     with col2:
-        video_frame = st.empty()
+        st.text("Predicted Sign:")
+        predicted_sign_textbox = st.empty()
+
+        st.text("Translated Sign:")
+        translated_sign_textbox = st.empty()
+
+        lang = st.selectbox("Select language", ["English", "Hindi", "Marathi", "Gujarati"])
+
+        if lang == "English":
+            selected_language_code = 'en'
+        elif lang == "Hindi":
+            selected_language_code = 'hi'
+        elif lang == "Marathi":
+            selected_language_code = 'mr'
+        elif lang == "Gujarati":
+            selected_language_code = 'gu'
 
         # Apply CSS styling for video container
         st.markdown(
@@ -53,6 +73,9 @@ def model():
             """,
             unsafe_allow_html=True
         )
+
+        # Variable to store the previous predicted character
+        prev_predicted_character = None
 
         while True:
             # Capture frame-by-frame
@@ -100,12 +123,21 @@ def model():
                         predicted_sign_textbox.text(predicted_character)
 
                         # Overlay gesture on frame
-                        cv2.putText(frame, predicted_character, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        cv2.putText(frame, predicted_character, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0),
+                                    2,
+                                    cv2.LINE_AA)
 
                         # Convert text to speech
                         engine = pyttsx3.init()
                         engine.say(predicted_character)
                         engine.runAndWait()
+
+                        # Translate the predicted sign only if it's different from the previous one
+                        if predicted_character != prev_predicted_character:
+                            trans = translator.translate(predicted_character, dest=selected_language_code)
+                            predicted_sign_textbox.text(trans.text)
+                            prev_predicted_character = predicted_character
+
                     except:
                         pass
 
@@ -126,6 +158,3 @@ def model():
         # Release the camera and close all OpenCV windows
         cap.release()
         cv2.destroyAllWindows()
-
-# Run the model function
-model()
