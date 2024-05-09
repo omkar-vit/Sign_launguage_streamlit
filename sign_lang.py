@@ -62,7 +62,7 @@ if selected == "Home":
             )
 
         with right_column:
-            width = 46
+            width = 50
             #     width = st.sidebar.slider(
             #     label="Width", min_value=0, max_value=100, value=DEFAULT_WIDTH, format="%d%%"
             # )
