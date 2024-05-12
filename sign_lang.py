@@ -1,9 +1,11 @@
+import cv2
 import streamlit as st
 #pyttsx3
 from streamlit_lottie import st_lottie  # pip install streamlit-lottie
 import requests  # pip install requests
 from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
 from inference_classifier import model
+# from inference_classifier import GestureClassifier
 
 st.set_page_config(page_title="Sign Language Helper", page_icon=":raised_hand_with_fingers_splayed:", layout="wide")
 
@@ -73,16 +75,13 @@ if selected == "Home":
             container.video(data=video1)
 
 elif selected == "Model":
-    model()
+    
     col1, col2 = st.columns(2)
     
-    with col1:
-        st.text_input(
-            "Detected sign below!",
-            "here i want the word to be printed",
-            key="placeholder",
-        )
-        
+    cap = cv2.VideoCapture(0)
+    # gesture_classifier = GestureClassifier()
+    model()
+    
     
 
 elif selected == "Dictionary":

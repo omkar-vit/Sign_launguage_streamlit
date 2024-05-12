@@ -1,154 +1,144 @@
+import pickle
+import cv2
+import mediapipe as mp
+import numpy as np
 import streamlit as st
-import os
-from streamlit_option_menu import option_menu
+from PIL import Image
+import base64
+import pyttsx3
+from labels_dict import labels_dict
+from googletrans import Translator
 
-# Function to load image or animation
-def load_media(selection):
-    media_path = os.path.join("images", f"{selection}.jpg")
-    if not os.path.exists(media_path):
-        media_path = os.path.join("images", f"{selection}.gif")
-    return media_path
+translator = Translator()
 
-# Page functions
-def page_home():
-    #load assets
-    video1 = open("Video_call.mp4", "rb") 
+# Load the GestureClassifier model
+class GestureClassifier:
+    def __init__(self):
+        self.model_dict = pickle.load(open("./model.p", "rb"))
+        self.model = self.model_dict["model"]
 
-    st.write("##")
-    st.write("##")
+        self.mp_hands = mp.solutions.hands
+        self.mp_drawing = mp.solutions.drawing_utils
+        self.mp_drawing_styles = mp.solutions.drawing_styles
 
-    #header
-    with st.container():
-        st.write("Step into the world of Sign Language, where every sign tells a story and every gesture bridges worlds.:wave:")
-        st.title("SignSpeak: Where silent gestures find their powerful voice.")
-        st.write("##")
-        st.subheader("Explore our project to witness the transformative impact of bridging communication divides and fostering inclusivity.")
-        st.write("##")
-        st.write("Join us as we embark on this enlightening journey together! [learn more >](https://google.com)")
-
-
-    st.write("##")
-    st.write("##")
-    st.write("##")
-    #what I do//// maybe add a video
-    with st.container():
-        st.write("---")
-        left_column, right_column = st.columns(2)
-        with left_column:
-            st.header("What we do")
-            st.write("##")
-            st.subheader(
-        """
-        Hello, I'm [Your Name]. Welcome to signSpeak!
-        
-        - With signSpeak, we've created a platform that understands your signs, translates them into written text, and even converts them into spoken words.
-        - Record your signs using a camera or webcam, and our technology will detect and translate them into your preferred language.
-        - You can also convert the translated text into spoken words, making it easier for everyone to understand.
-        
-        Thank you for joining us on this journey. Feel free to reach out if you have any questions or feedback.
-
-        """
-            )
-            
-        with right_column:
-            st.video(video1) #displaying the video
-
-        # Add your home page content here
-
-def page_model():
-    st.write("This is the Model Page!")
-    # Add your model page content here
-
-def page_dictionary():
-    st.title("Dictionary Page")
-    st.write("This is the dictionary page.")
-    
-    st.write("Here you can find signs or explanations for selected alphabets/numbers.")
-
-    
-    # Define terms and their corresponding images
-    images = {
-        'A': 'A',
-        'B': 'B',
-        'C': 'C',
-        'D': 'D',
-        'E': 'E',
-        'F': 'F',
-        'G': 'G',
-        'H': 'H',
-        'I': 'I',
-        'J': 'J',
-        'K': 'K',
-        'L': 'L',
-        'M': 'M',
-        'N': 'N',
-        'O': 'O',
-        'P': 'P',
-        'Q': 'Q',
-        'R': 'R',
-        'S': 'S',
-        'T': 'T',
-        'U': 'U',
-        'V': 'V',
-        'W': 'W',
-        'X': 'X',
-        'Y': 'Y',
-        'Z': 'Z',
-        # Add more letters as needed
-    }
-
-    
-    # Create four columns for buttons
-    cols = st.columns(7)
-
-    # Variable to store the selected letter
-    selected_letter = None
-
-    # Iterate over each letter and add a button to the corresponding column
-    for i, (letter, _) in enumerate(images.items()):
-        if i < 26: # limit to first 26 letters
-            button = cols[i % 7].button(letter)
-            if button:
-                # Store the selected letter
-                selected_letter = letter
-
-    # Display image for the selected letter
-    if selected_letter:
-        # Display image for the selected option
-        image_path = load_media(images[selected_letter])
-        st.image(image_path, use_column_width=True)
-
-
-def page_about_us():
-    st.write("---")
-    left_column, right_column = st.columns(2)
-    with left_column:
-        st.header("Inspiration about the project")
-        st.write("##")
-        st.write(
-            """
-            The Idea of our project was:
-            - blablabla
-            - blablabla
-            - blablabla
-            - blablabla
-
-            If you got any quesiton, feel free to connect with us through email.
-            """
+        self.hands = self.mp_hands.Hands(
+            static_image_mode=True, min_detection_confidence=0.3
         )
 
-#navbar
-selected = option_menu(None, ["Home", "Model", "Dictionary", 'About Us'], 
-    icons=['house', 'cloud-upload', "list-task", 'gear'], 
-    menu_icon="cast", default_index=0, orientation="horizontal")
+    def predict(self, frame):
+        data_aux = []
+        x_ = []
+        y_ = []
 
-# Page dictionary
-pages = {
-    "Home": page_home,
-    "Model": page_model,
-    "Dictionary": page_dictionary,
-    "About Us": page_about_us,
-}
+        H, W, _ = frame.shape
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-# Run selected page
-pages[selected]()
+        results = self.hands.process(frame_rgb)
+        predicted_character = None  # Initialize to None
+
+        if results.multi_hand_landmarks:
+            for hand_landmarks in results.multi_hand_landmarks:
+                self.mp_drawing.draw_landmarks(
+                    frame,
+                    hand_landmarks,
+                    self.mp_hands.HAND_CONNECTIONS,
+                    self.mp_drawing_styles.get_default_hand_landmarks_style(),
+                    self.mp_drawing_styles.get_default_hand_connections_style(),
+                )
+
+            for hand_landmarks in results.multi_hand_landmarks:
+                for i in range(len(hand_landmarks.landmark)):
+                    x = hand_landmarks.landmark[i].x
+                    y = hand_landmarks.landmark[i].y
+
+                    x_.append(x)
+                    y_.append(y)
+
+                for i in range(len(hand_landmarks.landmark)):
+                    x = hand_landmarks.landmark[i].x
+                    y = hand_landmarks.landmark[i].y
+                    data_aux.append(x - min(x_))
+                    data_aux.append(y - min(y_))
+
+            x1 = int(min(x_) * W) - 10
+            y1 = int(min(y_) * H) - 10
+
+            x2 = int(max(x_) * W) - 10
+            y2 = int(max(y_) * H) - 10
+
+            prediction = self.model.predict(
+                [np.asarray(data_aux + [0] * (84 - len(data_aux)))]
+            )
+            predicted_character = labels_dict[prediction[0]]
+
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
+            cv2.putText(
+                frame,
+                predicted_character,
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.3,
+                (150, 150, 150),
+                3,
+                cv2.LINE_AA,
+            )
+
+        return predicted_character, frame
+
+# Initialize Streamlit app
+st.title("Sign Language Recognition")
+st.text("Predicted Sign:")
+predicted_sign_textbox = st.empty()
+
+st.text("Translated Sign:")
+translated_sign_textbox = st.empty()
+
+lang = st.selectbox("Select language", ["English", "Hindi", "Marathi", "Gujarati"])
+
+if lang == "English":
+    selected_language_code = 'en'
+elif lang == "Hindi":
+    selected_language_code = 'hi'
+elif lang == "Marathi":
+    selected_language_code = 'mr'
+elif lang == "Gujarati":
+    selected_language_code = 'gu'
+
+gesture_classifier = GestureClassifier()
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Read frame from the camera
+    ret, frame = cap.read()
+    if not ret:
+        st.error("Error: Failed to capture frame.")
+        break
+
+    # Perform gesture classification using GestureClassifier
+    predicted_character, frame = gesture_classifier.predict(frame)
+
+    # Convert text to speech
+    engine = pyttsx3.init()
+    engine.say(predicted_character)
+    engine.runAndWait()
+
+    # Translate the predicted sign
+    trans = translator.translate(predicted_character, dest=selected_language_code)
+    translated_sign_textbox.text(trans.text)
+
+    # Convert the frame from BGR to RGB
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # Convert the frame to PIL Image
+    pil_image = Image.fromarray(rgb_frame)
+
+    # Display the frame in Streamlit
+    st.image(pil_image, channels="RGB")
+
+    # Check for 'q' key press to exit
+    if st.button("Stop"):
+        break
+
+# Release the VideoCapture object and close all windows
+cap.release()
+cv2.destroyAllWindows()
