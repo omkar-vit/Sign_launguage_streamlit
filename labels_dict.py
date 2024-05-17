@@ -37,4 +37,6 @@ labels_dict = {
     "9": "9",
     "home": "home",
     "namaste": "namaste",
+    "sorry": "sorry",
+    "good": "good",
 }
