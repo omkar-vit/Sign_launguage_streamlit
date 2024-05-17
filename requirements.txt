@@ -3,3 +3,6 @@ scikit-learn==1.2.0
 streamlit
 streamlit-lottie
 streamlit-option-menu
+mediapipe
+pyttsx3
+googletrans==4.0.0-rc1
