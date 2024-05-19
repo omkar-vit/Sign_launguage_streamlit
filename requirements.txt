@@ -6,3 +6,9 @@ streamlit-option-menu
 mediapipe
 pyttsx3
 googletrans==4.0.0-rc1
+cv2
+numpy
+pickle
+base64
+pyttsx3
+googletrans
