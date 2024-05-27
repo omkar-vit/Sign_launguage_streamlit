@@ -1,6 +1,6 @@
-import cv2
 import streamlit as st
 #pyttsx3
+import cv2
 from streamlit_lottie import st_lottie  # pip install streamlit-lottie
 import requests  # pip install requests
 from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
